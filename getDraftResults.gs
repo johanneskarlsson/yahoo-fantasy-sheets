@@ -21,35 +21,26 @@ function getDraftResults() {
         "playerTeamName",
       ],
     ]);
-  draftResultsDataSheet.getRange("A2:G2").setValue("Loading Data...");
+
   SpreadsheetApp.flush();
 
   const lastRow = draftResultsDataSheet.getLastRow();
-  console.log(lastRow);
   const lastPickRange = draftResultsDataSheet.getRange(lastRow, 2);
-  console.log(lastPickRange);
-  lastAddedPick = lastPickRange.getValue();
-  console.log(lastAddedPick);
+  lastAddedPick =
+    lastPickRange.getValue() != "pick" ? lastPickRange.getValue() : 0;
 
   const playerArray = getPlayerArray();
   const playerInfo = getPlayerInfo(playerArray);
 
   const draftResults = getDraftResultsFromYahoo();
-  if (draftResults) {
+  if (draftResults.length > 0) {
     const draftContent = getDraftContent(draftResults, teamsData, playerInfo);
-
-    const lastRow = draftResultsDataSheet.getLastRow();
-    console.log(lastRow);
-    const lastPickRange = draftResultsDataSheet.getRange(lastRow, 2);
-    console.log(lastPickRange);
-    lastAddedPick = lastPickRange.getValue();
-    console.log(lastAddedPick);
-
-    draftResultsDataSheet
-      .getRange(lastRow + 1, 1, draftContent.length, 7)
-      .setValues(draftContent);
-
-    SpreadsheetApp.flush();
+    if (draftContent.length > 0) {
+      draftResultsDataSheet
+        .getRange(lastRow + 1, 1, draftContent.length, 7)
+        .setValues(draftContent);
+      SpreadsheetApp.flush();
+    }
   } else {
     draftResultsDataSheet
       .getRange("A2:G2")
@@ -113,10 +104,6 @@ function getPlayerInfo(playerArray) {
       });
       const playerJson = xmlToJson(playerResponse.getContentText());
       const playerResults = playerJson.fantasy_content.league.players.player;
-
-      if (playerResponse.getResponseCode() > 299) {
-        console.log(JSON.stringify(playerJson));
-      }
 
       playerInfo.push(
         ...playerResults.map((player) => [
