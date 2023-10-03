@@ -1,18 +1,42 @@
-# Yahoo-Fantasy-Football-Data
-Download Yahoo Fantasy Football data for your League to Google Apps Script
+# yahoo-fantasy-sheets
 
-These scripts utilize OAuth2 to authenticate to Yahoo API to download the data from your league to a Google Spreadsheet.
+<h1>Get started</h1>
 
-Replace the GLOBALS variables to match your environment. 
+<h3>Step one</h3>
 
-This Script uses the OAuth2 and BetterLog libraries. OAuth2 is required but betterLog is not Comment out Logger =  BetterLog.useSpreadsheet(GLOBALS.sheetId); to use the standard Stackdriverlogging
+- Create and open a Google Sheet spreadsheet.
+- Create a script, select Extensions > Apps Script from within Google Sheets.
+- Import the files from this repo.
+- In the main.gs file, replace the CONFIG variables in the script to match your environment.
+- This script requires the OAuth2 and the ArrayLib library and optionally the BetterLog library.
+  - To add the required libraries, follow these steps:
+  - Go to the "Resources" menu and click on "Libraries". Add following libraries:
+    - OAuth2: 1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF, version: 27
+    - BetterLog: 1DSyxam1ceq72bMHsE6aOVeOl94X78WCwiYPytKi7chlg4x5GqiNXSw0l, version: 38
+    - ArrayLib: 1r9wNWbta3ebuYL4ENAdIp4UYKmyNiWf1AqsXYzfXduRHhTZEeTxS9MhZ, version: 23
 
-Go to Resources and add the following two libraries:
-* OAuth2: 1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF, https://github.com/googleworkspace/apps-script-oauth2
-* BetterLog: 1DSyxam1ceq72bMHsE6aOVeOl94X78WCwiYPytKi7chlg4x5GqiNXSw0l
+<h3>Step two</h3>
+In order to use the script, you need to obtain a Yahoo API client ID and Secret. Follow these steps:
 
-I have switched this repo to using [Clasp](https://github.com/google/clasp).  So all existing pages have had their extension changed from .gs to .js.
+- Sign in and register an app at https://developer.yahoo.com/
+- Enter https://script.google.com/macros/d/{YOUR SCRIPT ID}/usercallback into the redirect URI form. You can find your script ID in the URL.
+- Give at least read permission.
+- Once created, add client ID and client secret to the CONFIG variables in main.gs.
 
-You will need to obtain Yahoo API client ID & Secretto use the scripts.  In the process of creating your API credentials you will need to enter https://script.google.com/macros/d/{YOUR SCRIPT ID}/usercallback into the redirect URi form. Once entered and you have entered the key and secret below, you will need to run initializeLeagueData() function.  You will get a URL in a sidebar that will open.  Click on the link to go to it.  It should return "Success".  Once that is done, you will not need to do it again.
+<h3>Step three</h3>
 
-You can view downloaded data at https://docs.google.com/spreadsheets/d/11pMlfiHCAtTR1qGK6recZliVYyybCQwX462l3681L5Q/edit?usp=sharing
+- Run the script from the main.gs file.
+- Navigate to your sheet and you will see a sidebar to the right. Click authorize. You will be redirected to a screen that hopefully returns "success".
+- Rerun the script from the main.gs file.
+
+<h3>Optional</h3>
+Set up a time trigger if you want to automatically fetch data during draft:
+
+- Open up the script.
+- At the left, click Triggers alarm.
+- At the bottom right, click Add Trigger.
+- Select and configure the type of trigger you want to create.
+- Click Save.
+
+<h3>Credit</h3>
+Big credit to @bekd70 and this project of his https://github.com/bekd70/Yahoo-Fantasy-Football-Data.

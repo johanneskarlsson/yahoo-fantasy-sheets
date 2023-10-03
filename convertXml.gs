@@ -1,15 +1,14 @@
-/* Source: https://gist.github.com/erickoledadevrel/6b1e9e2796e3c21f669f */
 /**
  * Converts an XML string to a JSON object, using logic similar to the
  * sunset method Xml.parse().
  * @param {string} xml The XML to parse.
  * @returns {Object} The parsed XML.
  */
-function XML_to_JSON(xml) {
-  let doc = XmlService.parse(xml);
-  let result = {};
-  let root = doc.getRootElement();
-  result[root.getName()] = elementToJSON(root);
+function xmlToJson(xml) {
+  const doc = XmlService.parse(xml);
+  const result = {};
+  const root = doc.getRootElement();
+  result[root.getName()] = elementToJson(root);
   return result;
 }
 
@@ -19,16 +18,19 @@ function XML_to_JSON(xml) {
  * @param {XmlService.Element} element The element to parse.
  * @returns {Object} The parsed element.
  */
-function elementToJSON(element) {
-  let result = {};
+function elementToJson(element) {
+  const result = {};
+
   // Attributes.
-  element.getAttributes().forEach(function (attribute) {
+  element.getAttributes().forEach((attribute) => {
     result[attribute.getName()] = attribute.getValue();
   });
+
   // Child elements.
-  element.getChildren().forEach(function (child) {
-    let key = child.getName();
-    let value = elementToJSON(child);
+  element.getChildren().forEach((child) => {
+    const key = child.getName();
+    const value = elementToJson(child);
+
     if (result[key]) {
       if (!(result[key] instanceof Array)) {
         result[key] = [result[key]];
@@ -38,9 +40,11 @@ function elementToJSON(element) {
       result[key] = value;
     }
   });
+
   // Text content.
   if (element.getText()) {
-    result['Text'] = element.getText();
+    result["Text"] = element.getText();
   }
+
   return result;
 }
