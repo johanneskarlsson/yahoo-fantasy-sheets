@@ -1,4 +1,5 @@
 # yahoo-fantasy-sheets
+Fetch Yahoo Draft Results and insert into your sheet while drafting!
 
 <h1>Get started</h1>
 
