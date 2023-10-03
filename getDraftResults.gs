@@ -33,7 +33,7 @@ function getDraftResults() {
   const playerInfo = getPlayerInfo(playerArray);
 
   const draftResults = getDraftResultsFromYahoo();
-  if (draftResults.length > 0) {
+  if (draftResults && draftResults.length > 0) {
     const draftContent = getDraftContent(draftResults, teamsData, playerInfo);
     if (draftContent.length > 0) {
       draftResultsDataSheet
