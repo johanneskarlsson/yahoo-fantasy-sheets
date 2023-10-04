@@ -1,4 +1,5 @@
-let lastAddedPick = 0;
+let latestPick = 0;
+let previousPicks = [];
 
 function getDraftResults() {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.sheetId);
@@ -19,12 +20,11 @@ function getDraftResults() {
   SpreadsheetApp.flush();
 
   const lastRow = draftResultsDataSheet.getLastRow();
-  const lastPickRange = draftResultsDataSheet.getRange(lastRow, 2);
-  lastAddedPick =
-    lastPickRange.getValue() != "pick" ? lastPickRange.getValue() : 0;
-
-  //const playerArray = getPlayerArray();
-  //const playerInfo = getPlayerInfo(playerArray);
+  previousPicks = draftResultsDataSheet
+    .getRange(2, 2, lastRow, 1)
+    .getValues()
+    .flatMap((pick) => Number(pick));
+  console.log(`previousPicks are ${previousPicks}`);
 
   const draftResults = getDraftResultsFromYahoo();
   if (draftResults.length > 0) {
@@ -83,13 +83,11 @@ function getDraftContent(draftResults, teamsData, playersData) {
       const teamId = result.team_key.Text;
       const teamMatch = teamsData.findIndex((team) => team[0] === teamId);
       const manager = teamMatch > -1 ? teamsData[teamMatch][5] : "";
-
       // Check if player has a name, team name, and position
-      if (Number(pick) > lastAddedPick) {
+      if (!previousPicks.includes(Number(pick))) {
         draftContent.push([round, pick, playerName, teamId, manager]);
       }
     }
-    console.log(`lastAddedPick is ${lastAddedPick}`);
     return draftContent;
   }, []);
 }

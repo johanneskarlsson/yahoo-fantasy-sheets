@@ -102,7 +102,7 @@ function setGameKey() {
     let scriptProperties = PropertiesService.getScriptProperties();
     scriptProperties.setProperty('yearId', gameKey);
     
-    console.log(gameKey);
+    console.log(`GameKey is ${gameKey}`);
   } catch(e) {
     Logger.log(e);
   }
@@ -121,7 +121,7 @@ function checkGameKey() {
     if (!gameKey) {
       gameKey = setGameKey();
     } else {
-      console.log(gameKey);
+      console.log(`GameKey is ${gameKey}`);
     }
     
     return gameKey;
