@@ -38,16 +38,18 @@ In order to use the script, you need to obtain a Yahoo API client ID and Secret.
 <h3>Optional</h3>
 Set up time triggers if you want to automatically fetch data during draft:
 
-<h4>Option 1<h4>
-- Set the number of triggers you want per minute in the createDraftTimeTriggers.gs file. It defaults to 4.
-- Run the createDraftTimeTriggers function. Don't exit the console window since it will stop the run.
+   * <h4>Option 1<h4>
+   
+       * Set the number of triggers you want per minute in the createDraftTimeTriggers.gs file. It defaults to 4.
+       * Run the createDraftTimeTriggers function. Don't exit the console window since it will stop the run.
 
-<h4>Option 2<h4>
-- Open up the script.
-- At the left, click Triggers alarm.
-- At the bottom right, click Add Trigger.
-- Select and configure the type of trigger you want to create.
-- Click Save.
+   * <h4>Option 2<h4>
+
+       * Open up the script.
+       * At the left, click Triggers alarm.
+       * At the bottom right, click Add Trigger.
+       * Select and configure the type of trigger you want to create.
+       * Click Save.
 
 <h3>Credit</h3>
 Big credit to @bekd70 and this project of his https://github.com/bekd70/Yahoo-Fantasy-Football-Data.
