@@ -24,7 +24,7 @@ function getTeams() {
       "teamManager",
     ]);
 
-    const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/nhl.l.${CONFIG.leagueId}/teams`;
+    const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${yearId}.l.${CONFIG.leagueId}/teams`;
 
     try {
       const response = UrlFetchApp.fetch(url, {

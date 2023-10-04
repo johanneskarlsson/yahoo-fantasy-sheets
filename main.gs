@@ -15,10 +15,11 @@ const yearId = checkGameKey()
  * Initializes the League data
  */
 function initializeLeagueData() {
-  console.log("at the beginning")
+  console.log("Initializing..")
   getLeagueData();
   getTeams();
-  getDraftResults();
+  getPlayerData();
+  //getDraftResults();
 }
 
 function getService() {
@@ -93,7 +94,7 @@ function setGameKey() {
         'Authorization': 'Bearer ' + service.getAccessToken()
       }
     });
-
+    
     let json = xmlToJson(response.getContentText());
     let gameKey = json.fantasy_content.game.game_key.Text;
     Logger.log(JSON.stringify(json.fantasy_content));

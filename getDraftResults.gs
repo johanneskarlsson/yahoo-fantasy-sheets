@@ -7,20 +7,14 @@ function getDraftResults() {
     .getSheetByName("Teams")
     .getDataRange()
     .getValues();
+  const playersData = spreadsheet
+    .getSheetByName("Player Data")
+    .getDataRange()
+    .getValues();
 
   draftResultsDataSheet
-    .getRange("A1:G1")
-    .setValues([
-      [
-        "round",
-        "pick",
-        "teamId",
-        "team",
-        "playerName",
-        "playerPosition",
-        "playerTeamName",
-      ],
-    ]);
+    .getRange("A1:E1")
+    .setValues([["round", "pick", "playerName", "teamId", "manager"]]);
 
   SpreadsheetApp.flush();
 
@@ -29,17 +23,17 @@ function getDraftResults() {
   lastAddedPick =
     lastPickRange.getValue() != "pick" ? lastPickRange.getValue() : 0;
 
-  const playerArray = getPlayerArray();
-  const playerInfo = getPlayerInfo(playerArray);
+  //const playerArray = getPlayerArray();
+  //const playerInfo = getPlayerInfo(playerArray);
 
   const draftResults = getDraftResultsFromYahoo();
   if (draftResults.length > 0) {
     draftResultsDataSheet.getRange("I2").clearContent();
 
-    const draftContent = getDraftContent(draftResults, teamsData, playerInfo);
+    const draftContent = getDraftContent(draftResults, teamsData, playersData);
     if (draftContent.length > 0) {
       draftResultsDataSheet
-        .getRange(lastRow + 1, 1, draftContent.length, 7)
+        .getRange(lastRow + 1, 1, draftContent.length, 5)
         .setValues(draftContent);
       SpreadsheetApp.flush();
     }
@@ -54,72 +48,6 @@ function getOrCreateSheet(spreadsheet, sheetName) {
     sheet = spreadsheet.insertSheet(sheetName, 1);
   }
   return sheet;
-}
-
-function getPlayerArray() {
-  const service = getService();
-  if (service.hasAccess()) {
-    const url = `https://fantasysports.yahooapis.com/fantasy/v2/league/${yearId}.l.${CONFIG.leagueId}/draftresults`;
-    try {
-      const draftResponse = UrlFetchApp.fetch(url, {
-        muteHttpExceptions: true,
-        headers: {
-          Authorization: "Bearer " + service.getAccessToken(),
-        },
-      });
-      const draftJson = xmlToJson(draftResponse.getContentText());
-      const draftResults =
-        draftJson.fantasy_content.league.draft_results.draft_result;
-      if (draftResults !== undefined) {
-        return draftResults
-          .filter((result) => result.player_key)
-          .map((result) => result.player_key);
-      }
-    } catch (e) {
-      Logger.log(e);
-    }
-  }
-  return [];
-}
-
-function getPlayerInfo(playerArray) {
-  const service = getService();
-  const playerInfo = [];
-  const maxResults = 25;
-
-  for (let i = 0; i < playerArray.length; i += maxResults) {
-    const playerKeys = playerArray
-      .slice(i, i + maxResults)
-      .map((player) => player.Text);
-    const playerUrl = `https://fantasysports.yahooapis.com/fantasy/v2/league/${yearId}.l.${
-      CONFIG.leagueId
-    }/players;player_keys=${playerKeys.join(",")}`;
-
-    try {
-      const playerResponse = UrlFetchApp.fetch(playerUrl, {
-        muteHttpExceptions: true,
-        headers: {
-          Authorization: "Bearer " + service.getAccessToken(),
-        },
-      });
-      const playerJson = xmlToJson(playerResponse.getContentText());
-      const playerResults = playerJson.fantasy_content.league.players.player;
-
-      playerInfo.push(
-        ...playerResults.map((player) => [
-          player.name.full.Text,
-          player.display_position.Text,
-          player.editorial_team_full_name.Text,
-        ])
-      );
-    } catch (e) {
-      playerName = "";
-      playerTeamName = "";
-      Logger.log(e);
-    }
-  }
-
-  return playerInfo;
 }
 
 function getDraftResultsFromYahoo() {
@@ -142,45 +70,26 @@ function getDraftResultsFromYahoo() {
   return null;
 }
 
-function getDraftContent(draftResults, teamsData, playerInfo) {
+function getDraftContent(draftResults, teamsData, playersData) {
   return draftResults.reduce((draftContent, result) => {
-    const round = result.round.Text;
-    const pick = result.pick.Text;
-    const teamId = result.team_key.Text;
-    const teamMatch = teamsData.findIndex((team) => team[0] === teamId);
-    const team =
-      teamMatch > -1
-        ? `${teamsData[teamMatch][2]}--${teamsData[teamMatch][5]}`
-        : "";
-    const playerIndex = draftResults.indexOf(result);
-    const playerName = playerInfo[playerIndex]
-      ? playerInfo[playerIndex][0]
-      : "";
-    const playerPosition = playerInfo[playerIndex]
-      ? playerInfo[playerIndex][1]
-      : "";
-    const playerTeamName = playerInfo[playerIndex]
-      ? playerInfo[playerIndex][2]
-      : "";
-    console.log(`lastAddedPick is ${lastAddedPick}`);
-    // Check if player has a name, team name, and position
-    if (
-      playerName.length > 0 &&
-      playerPosition.length > 0 &&
-      playerTeamName.length > 0 &&
-      Number(pick) > lastAddedPick
-    ) {
-      draftContent.push([
-        round,
-        pick,
-        teamId,
-        team,
-        playerName,
-        playerPosition,
-        playerTeamName,
-      ]);
-    }
+    if (result.hasOwnProperty("player_key")) {
+      const round = result.round.Text;
+      const pick = result.pick.Text;
+      const playerKey = result.player_key.Text;
+      const playerMatch = playersData.findIndex(
+        (player) => player[0] === playerKey
+      );
+      const playerName = playerMatch > -1 ? playersData[playerMatch][1] : "";
+      const teamId = result.team_key.Text;
+      const teamMatch = teamsData.findIndex((team) => team[0] === teamId);
+      const manager = teamMatch > -1 ? teamsData[teamMatch][5] : "";
 
+      // Check if player has a name, team name, and position
+      if (Number(pick) > lastAddedPick) {
+        draftContent.push([round, pick, playerName, teamId, manager]);
+      }
+    }
+    console.log(`lastAddedPick is ${lastAddedPick}`);
     return draftContent;
   }, []);
 }

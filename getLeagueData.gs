@@ -5,10 +5,10 @@ function getLeagueData() {
   console.log("Getting league data");
 
   const ss = SpreadsheetApp.openById(CONFIG.sheetId);
-  let leagueDataSheet = ss.getSheetByName("LeagueData");
+  let leagueDataSheet = ss.getSheetByName("League Data");
 
   if (!leagueDataSheet) {
-    leagueDataSheet = ss.insertSheet("LeagueData", 1);
+    leagueDataSheet = ss.insertSheet("League Data", 1);
   }
   const service = getService();
   if (service.hasAccess()) {
