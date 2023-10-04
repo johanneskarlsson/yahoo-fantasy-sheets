@@ -33,7 +33,9 @@ function getDraftResults() {
   const playerInfo = getPlayerInfo(playerArray);
 
   const draftResults = getDraftResultsFromYahoo();
-  if (draftResults && draftResults.length > 0) {
+  if (draftResults.length > 0) {
+    draftResultsDataSheet.getRange("I2").clearContent();
+
     const draftContent = getDraftContent(draftResults, teamsData, playerInfo);
     if (draftContent.length > 0) {
       draftResultsDataSheet
@@ -42,9 +44,7 @@ function getDraftResults() {
       SpreadsheetApp.flush();
     }
   } else {
-    draftResultsDataSheet
-      .getRange("A2:G2")
-      .setValue("No Draft Results to report");
+    draftResultsDataSheet.getRange("I2").setValue("No Draft Results to report");
   }
 }
 
@@ -162,7 +162,7 @@ function getDraftContent(draftResults, teamsData, playerInfo) {
     const playerTeamName = playerInfo[playerIndex]
       ? playerInfo[playerIndex][2]
       : "";
-
+    console.log(`lastAddedPick is ${lastAddedPick}`);
     // Check if player has a name, team name, and position
     if (
       playerName.length > 0 &&
